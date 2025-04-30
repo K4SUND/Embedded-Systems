@@ -1,0 +1,80 @@
+
+
+#include <avr/io.h>
+
+
+#define F_CPU 16000000UL
+#define BAUD 9600
+#define UBRR_value  (((F_CPU/16)/BAUD)-1)
+
+#include <util/delay.h>
+
+void configureUSART(void)
+{
+	//setting Baud rate
+	UBRR0H = (UBRR_value>>8);
+	UBRR0L = UBRR_value;
+	
+	//enable Tx (send)
+	UCSR0B |= (1<<TXEN0);
+	
+	
+	//frame format
+	//databits(8 bits)
+	UCSR0B &= ~(1<<UCSZ02);
+	UCSR0C |= ((1<<UCSZ01)|(1<<UCSZ00));
+	
+	//mode (Aynchronous USART)
+	UCSR0C &= ~((1<<UMSEL00)|(1<<UMSEL00));
+	
+	//number of party bits (disabled)
+	UCSR0C &= ~((1<<UPM00)|(1<<UPM01));
+	
+	//number of stopbits (1)
+	UCSR0C &= ~(1<<USBS0);
+	
+	
+	
+	
+
+}
+
+void usartTransmit(unsigned char);
+
+int main(void)
+{
+	//output
+	DDRB |= (1<<PB5);
+	
+	//high
+	PORTB |= (1<<PB5);
+	
+	
+	configureUSART();	
+	
+	
+	while(1)
+	{
+		usartTransmit('E');
+		usartTransmit('S');
+		usartTransmit('D');
+		usartTransmit('6');
+		usartTransmit('3');
+		usartTransmit('0');
+		usartTransmit('4');
+		usartTransmit(' ');
+		_delay_ms(2000);
+	}
+	
+	return 0;
+}
+
+
+void usartTransmit(unsigned char data)
+{
+	//polling
+	//1
+	while(!(UCSR0A & (1<<UDRE0)));
+	UDR0 = data;
+	
+}
