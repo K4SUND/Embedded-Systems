@@ -1,0 +1,69 @@
+
+#define F_CPU 16000000UL
+#include <avr/io.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+
+
+#define CHANNEL 2
+
+
+void configureADC()
+{
+	//enable ADC
+	ADCSRA |= (1<<ADEN);
+	
+	//setting prescalar
+	ADCSRA |= ((1<<ADPS0)|(1<<ADPS1)|(1<<ADPS2)); 
+	
+	//channel (ADC1)
+	//ADMUX |= (1<<MUX0);
+	//ADMUX &= ~((1<<MUX1)|(1<<MUX2)|(1<<MUX3));
+	ADMUX |= (ADMUX & 0B11110000)|CHANNEL;
+	
+	//setting  Vref (AREF)
+	ADMUX &= ~((1<<REFS0)|(1<<REFS1));
+	
+	//enable interrupt
+	ADCSRA |= (1<<ADIE);
+	
+	//global interrupt enable
+	sei();
+	
+}
+
+
+int main(void)
+{
+	
+	DDRD = 0B11111111;
+	DDRB |= (1<<PB1)|(1<<PB0)|(1<<PB4);
+	
+	//configure ADC
+	configureADC();
+	
+	
+	
+	while(1)
+	{
+		//start conversion
+		ADCSRA|= (1<<ADSC);
+		
+		
+		
+		PORTB |= (1<<PB4);		
+		_delay_ms(500);
+		PORTB &= ~(1<<PB4);	
+		_delay_ms(500);
+		
+	}
+
+	return 0;
+}
+
+ISR(ADC_vect)
+{
+	PORTD = ADC;
+	/*PORTB = (ADC>>8);*/
+	
+}
