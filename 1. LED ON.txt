@@ -1,0 +1,18 @@
+#include <avr/io.h>
+#define F_CPU 16000000L
+
+
+int main(void)
+{
+   //Data direction
+   DDRB = (1<<PB5);
+   
+   //output high
+   PORTB = (1<<PB5);
+   
+   
+   
+    while (1) 
+    {
+    }
+}

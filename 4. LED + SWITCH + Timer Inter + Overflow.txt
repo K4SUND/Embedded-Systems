@@ -1,0 +1,78 @@
+
+
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#define F_CPU 16000000L
+
+void configureTimerINT(void)
+{
+	//prescalar (256)
+	TCCR1B |= (1<<CS12);
+	TCCR1B &= ~((1<<CS10)|(1<<CS11));
+	
+	//overflow 
+	TIMSK1 |= 0B00000001;
+	
+	
+	sei();
+	
+	
+	
+}
+
+volatile int toggle = 0;
+
+
+int main(void)
+{
+    
+   //Data direction
+   DDRB |= (1<<PB5);
+   
+   
+ 
+   
+   configureTimerINT();
+   
+   
+   
+    while (1) 
+    {
+		
+		
+		
+    }
+}
+
+ISR(TIMER1_COMPA_vect)
+{
+	if(toggle)
+	{
+		PORTB &= ~(1<<PB5);
+		
+	}
+	else{
+		
+		PORTB |= (1<<PB5);
+	}
+	
+	toggle = 1 - toggle  ;
+
+}
+
+
+ISR(TIMER1_OVF_vect)
+{
+	if(toggle)
+	{
+		PORTB &= ~(1<<PB5);
+		
+	}
+	else{
+		
+		PORTB |= (1<<PB5);
+	}
+	
+	toggle = 1 - toggle  ;
+
+}

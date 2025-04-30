@@ -1,0 +1,58 @@
+
+
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#define F_CPU 16000000L
+
+void configureINT0(void)
+{
+	//enable interrupt
+	EIMSK |= (1<<INT0);
+	
+	//configure the way -> RISING EDGE
+	EICRA |= ((1<<ISC01)|(1<<ISC00));
+	
+	//enable global interrupt
+	sei();
+
+}
+
+volatile int toggle = 0;
+
+
+int main(void)
+{
+    
+   //Data direction
+   DDRB |= (1<<PB5);
+   
+   
+ 
+   
+   configureINT0();
+   
+   
+   
+    while (1) 
+    {
+		
+		
+		
+    }
+}
+
+ISR(INT0_vect)
+{
+	if(toggle)
+	{
+		PORTB &= ~(1<<PB5);
+		
+	}
+	else{
+		
+		PORTB |= (1<<PB5);
+	}
+	
+	toggle = 1 - toggle  ;
+
+}
